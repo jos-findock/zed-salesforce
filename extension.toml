@@ -1,0 +1,23 @@
+id = "salesforce"
+name = "Salesforce"
+description = "Salesforce Apex and LWC language support powered by the Apex Language Server and @salesforce/lwc-language-server supplied by Salesforce."
+version = "1.0.0"
+schema_version = 1
+authors = [Jos Vlaar <jos.vlaar@findock.com>]
+repository = "https://github.com/jos-findock/zed-salesforce"
+
+[grammars.apex]
+repository = "https://github.com/aheber/tree-sitter-sfapex"
+commit = "3597575a429766dd7ecce9f5bb97f6fec4419d5d"
+path = "apex"
+
+[language_servers.apex]
+name = "Apex Language Server"
+language = "Apex"
+
+[language_servers.lwc]
+name = "LWC Language Server"
+languages = ["HTML"]
+
+[language_servers.lwc.language_ids]
+"HTML" = "html"

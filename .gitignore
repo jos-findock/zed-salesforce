@@ -1,0 +1,11 @@
+# Rust build artifacts
+target/
+Cargo.lock
+
+# Compiled extension and grammar outputs
+extension.wasm
+grammars/*.wasm
+grammars/apex/
+
+# macOS
+.DS_Store
