@@ -4,7 +4,7 @@ A [Zed](https://zed.dev) extension adding language support for Salesforce develo
 
 ## Features
 
-- **Apex** — syntax highlighting, code completion, diagnostics, and go-to-definition via the [Apex Language Server](https://github.com/forcedotcom/salesforcedx-vscode) (`apex-jorje-lsp.jar`) provided by Salesforce
+- **Apex** — syntax highlighting, code completion, diagnostics, and go-to-definition via the [Apex Language Server](https://github.com/forcedotcom/salesforcedx-vscode) (`apex-jorje-lsp.jar`) provided by Salesforce. Diagnostics are powered by the [Salesforce Code Analyzer](https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/code-analyzer.html) and include support for custom rulesets.
 - **LWC** — HTML language support for Lightning Web Components via the [`@salesforce/lwc-language-server`](https://www.npmjs.com/package/@salesforce/lwc-language-server) npm package provided by Salesforce
 - **Tree-sitter grammar** — fast, accurate Apex parsing using the [tree-sitter-sfapex](https://github.com/aheber/tree-sitter-sfapex) grammar
 
@@ -34,4 +34,5 @@ The Apex Language Server JAR and the LWC Language Server npm package are downloa
 
 - [Apex Language Server](https://github.com/forcedotcom/salesforcedx-vscode) — Salesforce
 - [LWC Language Server](https://github.com/salesforce/lwc) — Salesforce
+- [Salesforce Code Analyzer](https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/code-analyzer.html) — Salesforce
 - [tree-sitter-sfapex](https://github.com/aheber/tree-sitter-sfapex) — Alex Heber

@@ -1,5 +1,7 @@
 use zed_extension_api::{self as zed, LanguageServerId, Result};
 
+const CODE_ANALYZER_LSP_SCRIPT: &str = include_str!("../server/code-analyzer-lsp.js");
+
 struct SalesforceExtension;
 
 impl zed::Extension for SalesforceExtension {
@@ -71,6 +73,30 @@ impl zed::Extension for SalesforceExtension {
                     args: vec![
                         server_path.to_string_lossy().into_owned(),
                         "--stdio".to_string(),
+                    ],
+                    env: vec![],
+                })
+            }
+
+            "code-analyzer" => {
+                let sf = worktree.which("sf").ok_or_else(|| {
+                    "Salesforce CLI (sf) not found on PATH. Please install @salesforce/cli.".to_string()
+                })?;
+
+                let node = zed::node_binary_path()?;
+
+                let work_dir = std::env::current_dir()
+                    .map_err(|e| format!("could not get extension work directory: {e}"))?;
+                let script_path = work_dir.join("code-analyzer-lsp.js");
+
+                std::fs::write(&script_path, CODE_ANALYZER_LSP_SCRIPT)
+                    .map_err(|e| format!("failed to write code-analyzer-lsp.js: {e}"))?;
+
+                Ok(zed::Command {
+                    command: node,
+                    args: vec![
+                        script_path.to_string_lossy().into_owned(),
+                        sf,
                     ],
                     env: vec![],
                 })

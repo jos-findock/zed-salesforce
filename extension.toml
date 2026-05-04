@@ -3,7 +3,7 @@ name = "Salesforce"
 description = "Salesforce Apex and LWC language support powered by the Apex Language Server and @salesforce/lwc-language-server supplied by Salesforce."
 version = "1.0.0"
 schema_version = 1
-authors = [Jos Vlaar <jos.vlaar@findock.com>]
+authors = ["Jos Vlaar <jos.vlaar@findock.com>"]
 repository = "https://github.com/jos-findock/zed-salesforce"
 
 [grammars.apex]
@@ -21,3 +21,7 @@ languages = ["HTML"]
 
 [language_servers.lwc.language_ids]
 "HTML" = "html"
+
+[language_servers.code-analyzer]
+name = "Salesforce Code Analyzer"
+language = "Apex"
