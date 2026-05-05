@@ -22,6 +22,8 @@ function log(msg) {
   process.stderr.write(`[code-analyzer-lsp] ${msg}\n`);
 }
 
+log(`starting up (sf=${sfBin})`);
+
 // --- LSP framing (stdio transport) ---
 
 let inputBuffer = Buffer.alloc(0);
@@ -72,7 +74,6 @@ function notify(method, params) { send({ jsonrpc: '2.0', method, params }); }
 // --- State ---
 
 let workspaceRoot = null;
-let debounceTimer = null;
 let analyzing = false;
 
 // --- Severity mapping: Code Analyzer 1–5 → LSP 1–4 ---
@@ -89,22 +90,21 @@ function mapSeverity(s) {
 
 // --- Analysis ---
 
-function scheduleAnalysis(delayMs) {
-  if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(runAnalysis, delayMs);
-}
-
-function runAnalysis() {
+function runAnalysis(targetFile) {
+  log('starting analysis' + (targetFile ? ` for ${targetFile}` : ''));
   if (analyzing || !workspaceRoot) return;
   analyzing = true;
 
   const tmpFile = path.join(os.tmpdir(), `sca-${process.pid}-${Date.now()}.json`);
 
-  log(`running: ${sfBin} code-analyzer run --workspace . --output-file ${tmpFile}`);
+  const args = ['code-analyzer', 'run', '--workspace', '.', '--output-file', tmpFile];
+  if (targetFile) args.push('--target', targetFile);
+
+  log(`running: ${sfBin} ${args.join(' ')}`);
 
   execFile(
     sfBin,
-    ['code-analyzer', 'run', '--workspace', '.', '--output-file', tmpFile],
+    args,
     { cwd: workspaceRoot, timeout: 600000 },
     (err, _stdout, stderr) => {
       analyzing = false;
@@ -191,6 +191,7 @@ function publishDiagnostics(raw) {
 // --- LSP dispatcher ---
 
 function dispatch(msg) {
+  log(`received message: ${msg.method}`);
   switch (msg.method) {
     case 'initialize': {
       const params = msg.params || {};
@@ -213,15 +214,18 @@ function dispatch(msg) {
     }
 
     case 'initialized':
-      scheduleAnalysis(2000);
+      runAnalysis();
       break;
 
-    case 'textDocument/didSave':
-      scheduleAnalysis(3000);
+    case 'textDocument/didSave': {
+      const uri = msg.params?.textDocument?.uri;
+      const targetFile = uri ? uri.replace(/^file:\/\//, '') : null;
+      runAnalysis(targetFile);
       break;
+    }
 
     case 'workspace/didChangeWatchedFiles':
-      scheduleAnalysis(3000);
+      runAnalysis();
       break;
 
     case 'shutdown':
